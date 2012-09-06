@@ -1,25 +1,17 @@
-require 'uri'
-require 'base64'
-require 'openssl'
+require 'open_qq/signature'
 require 'net/http'
 
 module OpenQq
   class Gateway
-
     # - appid  : your app id.
     # - appkey : your app secret key.
     # - env    : about environment host url.production <http://openapi.tencentyun.com> test <http://119.147.19.43>
-    attr_accessor :appid, :appkey, :env, :options
+    attr_accessor :appid, :appkey, :env
 
     def initialize(appid, appkey, env)
       @appid   = appid
       @appkey  = appkey
       self.env = env
-    end
-
-    def call(url, http_method, options = {})
-      options[:sig] = signature( url, http_method, options.merge({:appid => @appid}) )
-      send( http_method.to_s.downcase, url, options.merge({:appid => @appid}) )
     end
 
     # override
@@ -29,27 +21,35 @@ module OpenQq
       @http = Net::HTTP.new(uri.host, uri.port)
     end
 
-    private
+    def call(url, http_method, options = {})
+      options = options.merge({:appid => @appid})
+      options[:sig] = signature "#{appkey}&", make_source(http_method.to_s.upcase, url, options)
+      
+      response = begin
+        @http.request( send(http_method, url, options_escape(options)) )
+      rescue Exception => e
+        raise RuntimeError.new("#{e.message}\n#{e.backtrace.inspect}")
+      end
+      
+      response.body
+    end
+
+    protected
 
     def get(url, options)
       parsed_options = options.map{|k,v| "#{k}=#{v}"}.join('&')
-      response = @http.request( Net::HTTP::Get.new("#{url}?#{parsed_options}") )
-      response.body
+      Net::HTTP::Get.new("#{url}?#{parsed_options}")
     end
 
     def post(url, options)
-      request = Net::HTTP::Post.new(url)
-      request.set_form_data(options)
-      response = @http.request(request)
-      response.body
+      Net::HTTP::Post.new(url).tap do |request|
+        request.set_form_data(options)
+      end
     end
 
-    def signature(url, http_method, options)
-      escape_url = URI.escape( url, /[^\.\-_\da-zA-Z]/ )
-      escape_opt = URI.escape( options.sort{|a,b| a.to_s <=> b.to_s}.map{|kv| "#{kv.first}=#{kv.last}" }.join('&'), /[^\.\-_\da-zA-Z]/ )
-      hexdigest  = OpenSSL::HMAC.hexdigest 'sha1', "#{@appkey}&", "#{http_method}&#{escape_url}&#{escape_opt}"
-      Base64.encode64(hexdigest).rstrip
-    end
+    private
+
+    include Signature
 
   end
 end

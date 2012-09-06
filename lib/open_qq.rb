@@ -22,26 +22,16 @@ module OpenQq
   #
   # OpenQq.get('/v3/user/get_info?appid=11')
   #
-  # OpenQq.get('/v3/user/get_info') do |body|
-  #   # some code
-  # end
-  #
-  def self.get(url, options = {}, &block)
-    #yield gate_way if block_given?
-    gateway.call(url, :GET, options)
+  def self.get(url, options = {})
+    gateway.call(url, :get, options)
   end
 
   # Example:
   #
   # OpenQq.post('/v3/user/get_info', {:appid => '11'})
   #
-  # OpenQq.post('/v3/user/get_info', {:appid => '11'}) do |body|
-  #   # some code
-  # end
-  #
-  def self.post(url, options = {}, &block)
-    #yield gate_way if block_given?
-    gateway.call(url, :POST, options)
+  def self.post(url, options = {})
+    gateway.call(url, :post, options)
   end
 
 end
