@@ -1,8 +1,16 @@
+# encoding: utf-8
+#
+# --
+# @author zires
+# @email  zshuaibin@gmail.com
+#
+require 'rubygems' if RUBY_VERSION < '1.9'
 require 'open_qq/gateway'
 
 module OpenQq
 
   class << self
+    
     attr_reader :gateway
 
     def init(options)
@@ -16,7 +24,7 @@ module OpenQq
 
   end
 
-  # Example:
+  # Examples:
   #
   # OpenQq.get('/v3/user/get_info', {:appid => '11'})
   #

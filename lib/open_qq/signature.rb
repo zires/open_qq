@@ -1,3 +1,9 @@
+# encoding: utf-8
+#
+# --
+# @author zires
+# @email  zshuaibin@gmail.com
+#
 require 'base64'
 require 'openssl'
 require 'uri'
@@ -13,7 +19,7 @@ module OpenQq
       URI.escape(url, /[^\.\-_\da-zA-Z]/)
     end
 
-    def options_escape(options)
+    def each_pair_escape(options)
       options.inject({}){|h,(k,v)| h[url_escape(k.to_s)] = url_escape(v.to_s);h}
     end
 

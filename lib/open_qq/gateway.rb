@@ -1,13 +1,22 @@
+# encoding: utf-8
+#
+# --
+# @author zires
+# @email  zshuaibin@gmail.com
+#
 require 'open_qq/signature'
 require 'net/http'
+require 'ostruct'
+require 'json'
 
 module OpenQq
   class Gateway
-    # - appid  : your app id.
-    # - appkey : your app secret key.
-    # - env    : about environment host url.production <http://openapi.tencentyun.com> test <http://119.147.19.43>
+
     attr_accessor :appid, :appkey, :env
 
+    # @param [String] appid
+    # @param [String] appkey
+    # @param [String] env 调用的环境地址.生产环境: <http://openapi.tencentyun.com> 测试环境: <http://119.147.19.43>
     def initialize(appid, appkey, env)
       @appid   = appid
       @appkey  = appkey
@@ -21,18 +30,39 @@ module OpenQq
       @http = Net::HTTP.new(uri.host, uri.port)
     end
 
-    def call(url, http_method, options = {})
+    # @param [String] url which api you want to call
+    # @param [String, Symbol] http_method
+    # @param [Hash] options extra options attach to the url
+    # @param [Boolean] raw will return raw output
+    #
+    # == Examples:
+    #
+    #   gateway = OpenQq::Gateway.new('1111', '2222', 'http://119.147.19.43')
+    #   user_info = gateway.call('/v3/user/get_info', :get)
+    #   user_info = gateway.call('/v3/user/get_info', :post, {:openid => 'bar'})
+    #
+    #   user_info.nickname # => foo
+    #
+    #   user_info = gateway.call('/v3/user/get_info', :post, {:openid => 'bar'}, true)
+    #   puts user_info # => '{"nickname":"foo"}'
+    #
+    # @return [String, Object] unformatted result or parsed result
+    def call(url, http_method, options = {}, raw = false)
       options = options.merge({:appid => @appid})
       options[:sig] = signature "#{appkey}&", make_source(http_method.to_s.upcase, url, options)
       
       response = begin
-        @http.request( send(http_method, url, options_escape(options)) )
+        @http.request( send(http_method, url, each_pair_escape(options)) )
       rescue Exception => e
         raise RuntimeError.new("#{e.message}\n#{e.backtrace.inspect}")
       end
       
-      response.body
+      return response.body if raw || options[:format] == 'xml'
+
+      OpenStruct.new( JSON.parse(response.body) )
     end
+
+    alias open call
 
     protected
 
