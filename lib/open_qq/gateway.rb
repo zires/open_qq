@@ -5,12 +5,14 @@
 # @email  zshuaibin@gmail.com
 #
 require 'open_qq/signature'
-require 'net/http'
+require 'open_qq/error'
 require 'ostruct'
-require 'json'
+require 'net/http'
 
 module OpenQq
   class Gateway
+
+    OPEN_HTTP_TRANSLATE_ERROR = 2001
 
     attr_accessor :appid, :appkey, :env
 
@@ -54,7 +56,7 @@ module OpenQq
       response = begin
         @http.request( send(http_method, url, each_pair_escape(options)) )
       rescue Exception => e
-        raise RuntimeError.new("#{e.message}\n#{e.backtrace.inspect}")
+        Error.new(OPEN_HTTP_TRANSLATE_ERROR, "#{e.message}\n#{e.backtrace.inspect}", options[:format])
       end
       
       return response.body if raw || options[:format] == 'xml'
