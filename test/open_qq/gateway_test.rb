@@ -11,48 +11,43 @@ class OpenQq::GatewayTest < MiniTest::Unit::TestCase
   end
 
   def test_call_get_request_without_params
-    assert_equal 'foo', @gateway.call('/v3/user/get_info', :get).nickname
+    assert_equal 'foo', @gateway.get('/v3/user/get_info').nickname
   end
 
   def test_call_get_request_with_params
     params = { :openid => 1111, 'openkey' => '2222', :pf => :pengyou, :format => 'json' }
-    assert_equal 'foo', @gateway.call('/v3/user/get_info', :get, params).nickname
+    assert_equal 'foo', @gateway.get('/v3/user/get_info', params).nickname
   end
 
   def test_call_get_request_with_xml_format
     params = { :openid => 1111, 'openkey' => '2222', :pf => :pengyou, :format => 'xml' }
-    assert_equal '<?xml version="1.0" encoding="UTF-8"?>', @gateway.call('/v3/user/get_info', :get, params)
+    assert_equal '<?xml version="1.0" encoding="UTF-8"?>', @gateway.get('/v3/user/get_info', params)
   end
 
   def test_call_get_request_without_format_param
     params = { :openid => 1111, 'openkey' => '2222', :pf => :pengyou }
-    assert_equal 'foo', @gateway.call('/v3/user/get_info', :get, params).nickname
+    assert_equal 'foo', @gateway.get('/v3/user/get_info', params).nickname
   end
 
   def test_call_get_request_with_unknow_format_param
     params = { :openid => 1111, 'openkey' => '2222', :pf => :pengyou, :format => 'ruby'}
-    assert_equal 'foo', @gateway.call('/v3/user/get_info', :get, params).nickname
+    assert_equal 'foo', @gateway.get('/v3/user/get_info', params).nickname
   end
 
   def test_call_post_request
     params = {:openid => '1111', :openkey => '2222', :pf => 'pengyou'}
-    assert_equal 'foo', @gateway.call('/v3/user/get_info', :post, params).nickname
+    assert_equal 'foo', @gateway.post('/v3/user/get_info', params).nickname
   end
 
   def test_call_post_request_with_raw_output
     params = {:openid => '1111', :openkey => '2222', :pf => 'pengyou'}
-    assert_equal '{ "ret": 0, "is_lost": 0, "nickname": "foo" }', @gateway.call('/v3/user/get_info', :post, params, :raw => true)
+    assert_equal '{ "ret": 0, "is_lost": 0, "nickname": "foo" }', @gateway.post('/v3/user/get_info', params, :raw => true)
   end
 
   def test_open_http_translate_error
     gateway = OpenQq::Gateway.new('123456', @appkey, @env)
     params = {:openid => '1111', :openkey => '2222', :pf => 'pengyou'}
-    assert_equal 2001, gateway.call('/v3/user/get_info', :get, params).ret
-  end
-
-  def test_call_has_alias_method_open
-    params = {:openid => '1111', :openkey => '2222', :pf => 'pengyou'}
-    assert_equal 'foo', @gateway.open('/v3/user/get_info', :post, params).nickname
+    assert_equal 2001, gateway.get('/v3/user/get_info', params).ret
   end
 
 end

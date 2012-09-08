@@ -6,28 +6,32 @@
 #
 require 'rubygems' if RUBY_VERSION < '1.9'
 require 'json'
-require 'open_qq/gateway'
+require 'open_qq/request'
+require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/hash/indifferent_access'
 
 module OpenQq
   class << self
 
-    attr_reader :gateway
-
-    # @param [Hash] options
-    def init(options)
-      @gateway ||= OpenQq::Gateway.new(options["appid"], options["appkey"], options["env"])
+    def setup(options = {})
+      options    = options.with_indifferent_access
+      @gateway ||= OpenQq::Gateway.new(options[:appid], options[:appkey], options[:env])
+      yield @gateway if block_given?
     end
 
-    # OpenQq.get('/v3/user/get_info', {:appid => '11'})
-    # @see Gateway#call
-    def get(url, options = {}, raw)
-      gateway.call(url, :get, options, raw)
-    end
+    # @see Gateway#get
+    delegate :appid, :appkey, :env, :get, :post, :to => :@gateway
 
-    # OpenQq.post('/v3/user/get_info', {:appid => '11'})
-    # @see Gateway#call
-    def post(url, options = {}, raw)
-      gateway.call(url, :post, options, raw)
+    # OpenQq.start('/v3/user/get_info', { :appid => 123 }) do |request|
+    #   request.get({:openid => '111'})
+    # end
+    def start(url, options)
+      request = OpenQq::Request.new(options.with_indifferent_access)
+      if block_given?
+        yield request
+      else
+        request
+      end
     end
 
   end

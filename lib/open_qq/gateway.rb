@@ -33,50 +33,59 @@ module OpenQq
     end
 
     # @param [String] url which api you want to call
-    # @param [String, Symbol] http_method
-    # @param [Hash] options extra options attach to the url
-    # @param [Boolean] raw will return raw output
-    #
-    # == Examples:
-    #
-    #   gateway = OpenQq::Gateway.new('1111', '2222', 'http://119.147.19.43')
-    #   user_info = gateway.call('/v3/user/get_info', :get)
-    #   user_info = gateway.call('/v3/user/get_info', :post, {:openid => 'bar'})
-    #
+    # @param [Hash] params extra params attach to the url
+    # @param [options] options
+    # 
+    # == Example:
+    #   gateway   = OpenQq::Gateway.new('1111', '2222', 'http://119.147.19.43')
+    #   user_info = gateway.get('/v3/user/get_info', {:openid => '11'} )
     #   user_info.nickname # => foo
     #
-    #   user_info = gateway.call('/v3/user/get_info', :post, {:openid => 'bar'}, true)
-    #   puts user_info # => '{"nickname":"foo"}'
+    # == available option
+    #   :raw => true will raw the output
+    #   user_info = gateway.get('/v3/user/get_info', {:openid => '11'}, {:raw => true} )
+    #   user_info.nickname # => '{"nickname":"foo"}'
     #
-    # @return [String, Object] unformatted result or parsed result
-    def call(url, http_method, options = {}, raw = false)
-      options = options.merge({:appid => @appid})
-      options[:sig] = signature "#{appkey}&", make_source(http_method.to_s.upcase, url, options)
-      
+    # @return (@see #call)
+    def get(url, params = {}, options = {})
+      parsed_params = each_pair_escape( wrap(:get, url, params) ).map{|k,v| "#{k}=#{v}"}.join('&')
+      get_request   = Net::HTTP::Get.new("#{url}?#{parsed_params}")
+      self.call( get_request, options.merge(:format => params[:format]) )
+    end
+
+    # @param (see #get)
+    #
+    # @return (@see #call)
+    def post(url, params = {}, options = {})
+      post_request = Net::HTTP::Post.new(url).tap do |request|
+        request.set_form_data each_pair_escape( wrap(:post, url, params) )
+      end
+      self.call( post_request, options.merge(:format => params[:format]) )
+    end
+
+    protected
+
+    # Call the request and format the output
+    # @param [Net::HTTP::Request] request be called
+    # @param [Hash] options some option used to format output
+    #
+    # @return [String, Object] unformatted string result or parsed OpenStruct instance
+    def call(request, options)
       response = begin
-        @http.request( send(http_method, url, each_pair_escape(options)) )
+        @http.request(request)
       rescue Exception => e
         Error.new(OPEN_HTTP_TRANSLATE_ERROR, "#{e.message}\n#{e.backtrace.inspect}", options[:format])
       end
       
-      return response.body if raw || options[:format] == 'xml'
+      return response.body if options[:raw] || options[:format] == 'xml'
 
       OpenStruct.new( JSON.parse(response.body) )
     end
 
-    alias open call
-
-    protected
-
-    def get(url, options)
-      parsed_options = options.map{|k,v| "#{k}=#{v}"}.join('&')
-      Net::HTTP::Get.new("#{url}?#{parsed_options}")
-    end
-
-    def post(url, options)
-      Net::HTTP::Post.new(url).tap do |request|
-        request.set_form_data(options)
-      end
+    def wrap(http_method, url, params)
+      params = params.merge(:appid => @appid)
+      params[:sig] = signature( "#{@appkey}&", make_source(http_method.to_s.upcase, url, params) )
+      params
     end
 
     private
