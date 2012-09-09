@@ -1,0 +1,16 @@
+# open_qq configruation.
+# see http://open.qq.com/
+development:
+  appid:
+  appkey:
+  env: http://119.147.19.43
+
+test:
+  appid:
+  appkey:
+  env: http://119.147.19.43
+
+production:
+  appid:
+  appkey:
+  env: http://openapi.tencentyun.com

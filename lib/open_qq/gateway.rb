@@ -36,12 +36,12 @@ module OpenQq
     # @param [Hash] params extra params attach to the url
     # @param [options] options
     # 
-    # == Example:
+    # @example
     #   gateway   = OpenQq::Gateway.new('1111', '2222', 'http://119.147.19.43')
     #   user_info = gateway.get('/v3/user/get_info', {:openid => '11'} )
     #   user_info.nickname # => foo
     #
-    # == available option
+    # @example available option
     #   :raw => true will raw the output
     #   user_info = gateway.get('/v3/user/get_info', {:openid => '11'}, {:raw => true} )
     #   user_info.nickname # => '{"nickname":"foo"}'

@@ -28,7 +28,7 @@ user_info.nickname
 # => 'foo'
 ```
 
-如果你只想原样返回未加工的数据
+如果你只想原样返回未加工的数据，使用`raw => true`
 
 ```ruby
 user_info = OpenQq.post('/v3/user/get_info', {:openid => '111',:openkey => '222'}, :raw => true)
@@ -40,6 +40,7 @@ puts user_info
 
 ```ruby
 options   = {:appid => 'newappid', :appkey => 'newappkey', :env => 'http://newenv'}
+
 user_info = OpenQq.start('/v3/user/get_info', options) do |request|
   request.get {:openid => '111',:openkey => '222'}
   #或者
@@ -57,16 +58,19 @@ user_info.nickname
 gem 'open_qq'
 ```
 
-在config目录下生成配置文件
+执行`bundle install`
+
+在config目录下生成配置文件config/open_qq.yml
 ```
-rails g open_qq::install
+rails g open_qq:install
 ```
 
 在配置文件中填入appid, appkey和env的值，启动服务后全局都可以使用，例如：
 
 ```
 class OpenQqController < ApplicationController
-
+  
+  # 假设这里是应用的入口
   def index
     user_info = OpenQq.post('/v3/user/get_info', params.slice!(:action, :controller))
     if user_info.ret.to_i == 0
@@ -81,9 +85,10 @@ end
 ## 注意和说明
 
 * 当传入的format为xml时，不会对返回的结果做处理，直接字符串返回
-* 当传入的format不为xml时，会转换成json，并且使用[OpenStruct](http://www.ruby-doc.org/stdlib-1.8.7/libdoc/ostruct/rdoc/OpenStruct.html, 'OpenStruct')封装
-* 当ret返回2001时，是由本api抛出
+* 当传入的format不为xml时，会使用`JSON#parse`转换成hash，并且使用[OpenStruct](http://www.ruby-doc.org/stdlib-1.8.7/libdoc/ostruct/rdoc/OpenStruct.html, 'OpenStruct')封装
+* 当ret返回`2001`时，是由本api抛出
+* 如果不想使用open_qq.yml，只要在使用前全局配置好`OpenQq`即可
 * 测试基本覆盖，可以下载下来执行`rake`
 * bug反馈[Issue](https://github.com/zires/open_qq/issues)
 
-## This project rocks and uses MIT-LICENSE.
+#### This project rocks and uses MIT-LICENSE.

@@ -22,9 +22,10 @@ module OpenQq
     # @see Gateway#get
     delegate :appid, :appkey, :env, :get, :post, :to => :@gateway
 
-    # OpenQq.start('/v3/user/get_info', { :appid => 123 }) do |request|
-    #   request.get({:openid => '111'})
-    # end
+    # @example
+    #   OpenQq.start('/v3/user/get_info', { :appid => 123 }) do |request|
+    #     request.get({:openid => '111'})
+    #   end
     def start(url, options)
       request = OpenQq::Request.new(options.with_indifferent_access)
       if block_given?
@@ -36,3 +37,5 @@ module OpenQq
 
   end
 end
+
+require 'open_qq/railtie' if defined?(Rails)
