@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email       = ["zshuaibin@gmail.com"]
   s.homepage    = "https://github.com/zires/open_qq"
   s.summary     = "open qq ruby sdk. v3 version"
-  s.description = "see http://open.qq.com/"
+  s.description = "腾讯开放平台ruby版SDK(v3版本)http://open.qq.com/"
 
   s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]

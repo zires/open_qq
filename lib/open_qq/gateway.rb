@@ -29,6 +29,7 @@ module OpenQq
     def env=(env)
       @env  = env
       uri   = URI.parse(env)
+      # TODO: https
       @http = Net::HTTP.new(uri.host, uri.port)
     end
 
