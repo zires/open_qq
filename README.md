@@ -21,11 +21,12 @@ OpenQq.setup(:appid => '123', :appkey => '456', :env => 'http://119.147.19.43')
 
 # get请求
 user_info = OpenQq.get('/v3/user/get_info', :openid => '111',:openkey => '222')
+
 # 或者post请求
 user_info = OpenQq.post('/v3/user/get_info',:openid => '111',:openkey => '222')
 
-user_info.nickname 
-# => 'foo'
+user_info.ret # => 0
+user_info.nickname # => 'foo'
 ```
 
 如果你只想原样返回未加工的数据，使用`raw => true`
@@ -88,9 +89,9 @@ end
 ## 注意和说明
 
 * 当传入的format为xml时，不会对返回的结果做处理，直接字符串返回
-* 当传入的format不为xml时，会使用`JSON#parse`转换成hash，并且使用[OpenStruct](http://www.ruby-doc.org/stdlib-1.8.7/libdoc/ostruct/rdoc/OpenStruct.html, 'OpenStruct'){:target="_blank"}封装
+* 当传入的format不为xml时，会使用`JSON#parse`转换成hash，并且使用[OpenStruct](http://www.ruby-doc.org/stdlib-1.8.7/libdoc/ostruct/rdoc/OpenStruct.html, 'OpenStruct')封装
 * 当ret返回`2001`时，是由本api抛出
-* 关于*signature verification failed*，先仔细对照[文档](http://wiki.open.qq.com/wiki/%E8%85%BE%E8%AE%AF%E5%BC%80%E6%94%BE%E5%B9%B3%E5%8F%B0%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%94%E7%94%A8%E7%AD%BE%E5%90%8D%E5%8F%82%E6%95%B0sig%E7%9A%84%E8%AF%B4%E6%98%8E#.E4.B8.BA.E4.BB.80.E4.B9.88.E6.80.BB.E6.98.AF.E8.BF.94.E5.9B.9E.E2.80.9C-5.EF.BC.9Asignature_verification_failed.E2.80.9D.EF.BC.9F){:target="_blank"}
+* 关于*signature verification failed*，先仔细对照[文档](http://wiki.open.qq.com/wiki/%E8%85%BE%E8%AE%AF%E5%BC%80%E6%94%BE%E5%B9%B3%E5%8F%B0%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%94%E7%94%A8%E7%AD%BE%E5%90%8D%E5%8F%82%E6%95%B0sig%E7%9A%84%E8%AF%B4%E6%98%8E#.E4.B8.BA.E4.BB.80.E4.B9.88.E6.80.BB.E6.98.AF.E8.BF.94.E5.9B.9E.E2.80.9C-5.EF.BC.9Asignature_verification_failed.E2.80.9D.EF.BC.9F)
 
 ```
 可以通过联调工具看下签名是否一致
