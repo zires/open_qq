@@ -7,7 +7,7 @@ module OpenQq
 
       desc "Creates a ThemePark initializer file."
       def copy_initializer
-        template "open_qq.yml", "config/open_qq.rb"
+        template "open_qq.yml", "config/open_qq.yml"
       end
 
     end
