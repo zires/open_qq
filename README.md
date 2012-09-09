@@ -67,13 +67,13 @@ rails g open_qq:install
 
 在配置文件中填入appid, appkey和env的值，启动服务后全局都可以使用，例如：
 
-```
+```ruby
 class OpenQqController < ApplicationController
   
   # 假设这里是应用的入口
   def index
     user_info = OpenQq.post('/v3/user/get_info', params.slice!(:action, :controller))
-    if user_info.ret.to_i == 0
+    if user_info.ret == 0
       # do something
     end
   end
