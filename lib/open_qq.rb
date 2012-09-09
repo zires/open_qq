@@ -20,7 +20,7 @@ module OpenQq
     end
 
     # @see Gateway#get
-    delegate :appid, :appkey, :env, :get, :post, :to => :@gateway
+    delegate :appid, :appkey, :env, :get, :post, :wrap, :to => :@gateway
 
     # @example
     #   OpenQq.start('/v3/user/get_info', { :appid => 123 }) do |request|
