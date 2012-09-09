@@ -48,7 +48,7 @@ module OpenQq
     #
     # @return (@see #call)
     def get(url, params = {}, options = {})
-      parsed_params = wrap(:get, url, params).map{|k,v| "#{k}=#{v}"}.join('&')
+      parsed_params = each_pair_escape( wrap(:get, url, params) ).map{|k,v| "#{k}=#{v}"}.join('&')
       get_request   = Net::HTTP::Get.new("#{url}?#{parsed_params}")
       self.call( get_request, options.merge(:format => params[:format]) )
     end
@@ -57,16 +57,15 @@ module OpenQq
     #
     # @return (@see #call)
     def post(url, params = {}, options = {})
-      post_request = Net::HTTP::Post.new(url).tap do |request|
-        request.set_form_data wrap(:post, url, params)
-      end
+      post_request = Net::HTTP::Post.new(url)
+      post_request.set_form_data wrap(:post, url, params)
       self.call( post_request, options.merge(:format => params[:format]) )
     end
 
     def wrap(http_method, url, params)
       params = params.merge(:appid => @appid)
       params[:sig] = signature( "#{@appkey}&", make_source(http_method.to_s.upcase, url, params) )
-      each_pair_escape params
+      params
     end
 
     protected
