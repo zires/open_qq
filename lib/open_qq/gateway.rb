@@ -47,7 +47,7 @@ module OpenQq
     #   user_info = gateway.get('/v3/user/get_info', {:openid => '11'}, {:raw => true} )
     #   user_info.nickname # => '{"nickname":"foo"}'
     #
-    # @return (@see #call)
+    # @return (see #call)
     def get(url, params = {}, options = {})
       parsed_params = each_pair_escape( wrap(:get, url, params) ).map{|k,v| "#{k}=#{v}"}.join('&')
       get_request   = Net::HTTP::Get.new("#{url}?#{parsed_params}")
@@ -56,7 +56,7 @@ module OpenQq
 
     # @param (see #get)
     #
-    # @return (@see #call)
+    # @return (see #call)
     def post(url, params = {}, options = {})
       post_request = Net::HTTP::Post.new(url)
       post_request.set_form_data wrap(:post, url, params)
