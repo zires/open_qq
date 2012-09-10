@@ -23,10 +23,10 @@ module OpenQq
     delegate :appid, :appkey, :env, :get, :post, :wrap, :to => :@gateway
 
     # @example
-    #   OpenQq.start('/v3/user/get_info', { :appid => 123 }) do |request|
+    #   OpenQq.call('/v3/user/get_info', { :appid => 123 }) do |request|
     #     request.get({:openid => '111'})
     #   end
-    def start(url, options)
+    def call(url, options)
       request = OpenQq::Request.new(options.with_indifferent_access)
       if block_given?
         yield request
@@ -35,11 +35,13 @@ module OpenQq
       end
     end
 
+    alias start call
+
     # TODO
     def verify_callback_sig
       
     end
-
+    
   end
 end
 

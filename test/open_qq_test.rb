@@ -74,7 +74,14 @@ class OpenQqTest < MiniTest::Unit::TestCase
     assert_equal 2001, OpenQq.get('/v3/user/get_info', params).ret
   end
 
-  def test_start_wont_change_get_and_post_method
+  def test_call_wont_change_get_and_post_method
+    params  = { :openid => 1111, 'openkey' => '2222', :pf => :pengyou, :format => 'json' }
+    respond = OpenQq.call('/v3/user/get_info', @options){|r| r.get(params) }
+    assert_equal 'foo', OpenQq.get('/v3/user/get_info', params).nickname
+    assert_equal 'foo', respond.nickname
+  end
+
+  def test_call_has_alise_method_start
     params  = { :openid => 1111, 'openkey' => '2222', :pf => :pengyou, :format => 'json' }
     respond = OpenQq.start('/v3/user/get_info', @options){|r| r.get(params) }
     assert_equal 'foo', OpenQq.get('/v3/user/get_info', params).nickname

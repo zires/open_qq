@@ -42,7 +42,7 @@ puts user_info
 ```ruby
 options   = {:appid => 'newappid', :appkey => 'newappkey', :env => 'http://newenv'}
 
-user_info = OpenQq.start('/v3/user/get_info', options) do |request|
+user_info = OpenQq.call('/v3/user/get_info', options) do |request|
   
   request.get {:openid => '111',:openkey => '222'}
 
@@ -107,4 +107,7 @@ puts sig # 与联调结果比对
 * 测试基本覆盖，可以下载下来执行`rake`
 * bug反馈[Issue](https://github.com/zires/open_qq/issues)
 
-#### This project rocks and uses MIT-LICENSE.
+## Changelog
+
+
+## This project rocks and uses MIT-LICENSE.
