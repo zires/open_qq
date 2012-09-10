@@ -7,7 +7,7 @@
 require 'open_qq/signature'
 require 'open_qq/error'
 require 'ostruct'
-require 'net/http'
+require 'net/https'
 
 module OpenQq
   class Gateway
@@ -29,8 +29,12 @@ module OpenQq
     def env=(env)
       @env  = env
       uri   = URI.parse(env)
-      # TODO: https
       @http = Net::HTTP.new(uri.host, uri.port)
+      # HTTPS
+      if uri.scheme == "https"
+        @http.use_ssl     = true
+        @http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
     end
 
     # @param [String] url which api you want to call

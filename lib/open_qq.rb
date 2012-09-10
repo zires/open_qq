@@ -35,6 +35,11 @@ module OpenQq
       end
     end
 
+    # TODO
+    def verify_callback_sig
+      
+    end
+
   end
 end
 

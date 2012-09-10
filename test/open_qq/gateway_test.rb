@@ -50,4 +50,12 @@ class OpenQq::GatewayTest < MiniTest::Unit::TestCase
     assert_equal 2001, gateway.get('/v3/user/get_info', params).ret
   end
 
+  def test_https_request
+    gateway = OpenQq::Gateway.new(@appid, @appkey, 'https://119.147.19.43')
+    http = gateway.instance_variable_get(:@http)
+    assert_equal 443, http.port
+    assert_equal '119.147.19.43', http.address
+    assert http.use_ssl?
+  end
+
 end
