@@ -11,13 +11,16 @@ gem install open_qq
 
 ## 使用
 
-使用非常简单，传入应用的appid, appkey和环境地址env _http://openapi.tencentyun.com_ 或者 _http://119.147.19.43_ 即可
+使用非常简单，传入应用的`appid`, `appkey`和环境地址`env`
 
 ```ruby
 require 'rubygems'
 require 'open_qq'
 
 OpenQq.setup(:appid => '123', :appkey => '456', :env => 'http://119.147.19.43')
+
+# 或者https
+OpenQq.setup(:appid => '123', :appkey => '456', :env => 'https://119.147.19.43')
 
 # get请求
 user_info = OpenQq.get('/v3/user/get_info', :openid => '111',:openkey => '222')
@@ -53,6 +56,29 @@ end
 
 user_info.nickname
 # => 'foo'
+```
+
+回调协议签名验证
+
+```ruby
+params = {openid: 'test001', appid: '33758', sig: 'VvKwcaMqUNpKhx0XfCvOqPRiAnU%3D'}
+OpenQq.verify_callback_sig(:get, '/cgi-bin/temp.py', params)
+# => true or false
+
+#指定特定的appkey
+OpenQq.verify_callback_sig(:get, '/cgi-bin/temp.py', params, 'xxxxxx')
+
+# 在rails中使用
+class OpenQqController < ApplicationController
+  include OpenQq::Rails::ActionController
+
+  def index
+    if verify_callback_sig
+      ...do something
+    end
+  end
+end
+
 ```
 
 ## 在rails中使用
@@ -108,6 +134,10 @@ puts sig # 与联调结果比对
 * bug反馈[Issue](https://github.com/zires/open_qq/issues)
 
 ## Changelog
+
+* 2012/09/11 
+增加对https的支持
+支持支付回调协议签名验证
 
 
 ## This project rocks and uses MIT-LICENSE.

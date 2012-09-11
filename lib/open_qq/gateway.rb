@@ -18,7 +18,11 @@ module OpenQq
 
     # @param [String] appid
     # @param [String] appkey
-    # @param [String] env 调用的环境地址.生产环境: <http://openapi.tencentyun.com> 测试环境: <http://119.147.19.43>
+    # @param [String] env 调用的环境地址
+    #
+    # @example
+    #   OpenQq::Gateway.new('1111', '2222', 'http://119.147.19.43')
+    #   OpenQq::Gateway.new('1111', '2222', 'https://openapi.tencentyun.com')
     def initialize(appid, appkey, env)
       @appid   = appid
       @appkey  = appkey
@@ -53,7 +57,7 @@ module OpenQq
     #
     # @return (see #call)
     def get(url, params = {}, options = {})
-      parsed_params = each_pair_escape( wrap(:get, url, params) ).map{|k,v| "#{k}=#{v}"}.join('&')
+      parsed_params = Gateway.each_pair_escape( wrap(:get, url, params) ).map{|k,v| "#{k}=#{v}"}.join('&')
       get_request   = Net::HTTP::Get.new("#{url}?#{parsed_params}")
       self.call( get_request, options.merge(:format => params[:format]) )
     end
@@ -67,10 +71,15 @@ module OpenQq
       self.call( post_request, options.merge(:format => params[:format]) )
     end
 
+    # wrap `http_method`, `url`, `params` together
     def wrap(http_method, url, params)
       params = params.merge(:appid => @appid)
-      params[:sig] = signature( "#{@appkey}&", make_source(http_method.to_s.upcase, url, params) )
+      params[:sig] = Gateway.signature( "#{@appkey}&", Gateway.make_source(http_method.to_s.upcase, url, params) )
       params
+    end
+
+    class << self
+      include Signature
     end
 
     protected
@@ -91,10 +100,6 @@ module OpenQq
 
       OpenStruct.new( JSON.parse(response.body) )
     end
-
-    private
-
-    include Signature
 
   end
 end

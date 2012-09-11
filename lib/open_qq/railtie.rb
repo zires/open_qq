@@ -17,7 +17,13 @@ module OpenQq
           puts e.message
         end
       end
-    end 
+    end
+
+    initializer "load open_qq controller method" do
+      ActiveSupport.on_load(:action_controller) do
+        require 'open_qq/rails/action_controller'
+      end
+    end
 
   end
 end

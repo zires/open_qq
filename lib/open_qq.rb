@@ -37,9 +37,18 @@ module OpenQq
 
     alias start call
 
-    # TODO
-    def verify_callback_sig
-      
+    # @example
+    #   params = {openid: 'test001', appid: '33758', sig: 'VvKwcaMqUNpKhx0XfCvOqPRiAnU%3D'}
+    #   OpenQq.verify_callback_sig(:get, '/cgi-bin/temp.py', params)
+    #   #diffenert key
+    #   OpenQq.verify_callback_sig(:get, '/cgi-bin/temp.py', params, 'xxxxxx')
+    #
+    # @return [Boolean]
+    def verify_callback_sig(http_method, url, params, key = nil)
+      key  ||= appkey
+      params = params.dup
+      sig    = params.delete('sig') || params.delete(:sig)
+      Gateway.verify_sig(sig, "#{key}&", http_method.to_s.upcase, url, params)
     end
     
   end

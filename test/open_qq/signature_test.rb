@@ -44,4 +44,28 @@ class OpenQq::SignatureTest < MiniTest::Unit::TestCase
     assert_equal( 'o/nGo1QkVEiiN6Bqn/fRJtEJwLc=', @foo.signature("#{@appkey}&", source) )
   end
 
+  #测试用例通过http://wiki.open.qq.com/wiki/回调发货URL的协议说明_V3获得
+  def test_make_callback_source
+    params = 'openid=test001&appid=33758&ts=1328855301&payitem=323003*8*1&token=53227955F80B805B50FFB511E5AD51E025360&billno=-APPDJT18700-20120210-1428215572&version=v3&zoneid=1&providetype=0&amt=80&payamt_coins=20&pubacct_payamt_coins=10'
+    options = {}
+    params.split('&').each do |param|
+      param = param.split('=')
+      options[param.first] = param.last
+    end
+    expect = 'GET&%2Fcgi-bin%2Ftemp.py&amt%3D80%26appid%3D33758%26billno%3D%252DAPPDJT18700%252D20120210%252D1428215572%26openid%3Dtest001%26payamt_coins%3D20%26payitem%3D323003%2A8%2A1%26providetype%3D0%26pubacct_payamt_coins%3D10%26token%3D53227955F80B805B50FFB511E5AD51E025360%26ts%3D1328855301%26version%3Dv3%26zoneid%3D1'
+    assert_equal expect, @foo.make_callback_source(:GET, '/cgi-bin/temp.py', options)
+  end
+
+  def test_verify_sig
+    key = '12345f9a47df4d1eaeb3bad9a7e54321&'
+    sig = 'VvKwcaMqUNpKhx0XfCvOqPRiAnU%3D'
+    params = 'openid=test001&appid=33758&ts=1328855301&payitem=323003*8*1&token=53227955F80B805B50FFB511E5AD51E025360&billno=-APPDJT18700-20120210-1428215572&version=v3&zoneid=1&providetype=0&amt=80&payamt_coins=20&pubacct_payamt_coins=10'
+    options = {}
+    params.split('&').each do |param|
+      param = param.split('=')
+      options[param.first] = param.last
+    end
+    assert @foo.verify_sig(sig, key, :GET, '/cgi-bin/temp.py', options), 'Verify sig failure'
+  end
+
 end
