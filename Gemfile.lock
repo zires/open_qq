@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    open_qq (3.0.2)
+    open_qq (3.0.3)
       activesupport
 
 GEM
