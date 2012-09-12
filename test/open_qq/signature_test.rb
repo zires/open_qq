@@ -30,9 +30,9 @@ class OpenQq::SignatureTest < MiniTest::Unit::TestCase
     assert_equal expect_source, @foo.make_source(@http_method, @url, @options)
   end
 
-  def test_each_pair_escape
+  def test_parsed_params
     opt = { '/ +=&' => '123@*!' }
-    assert_equal( {'%2F%20%2B%3D%26' => '123%40%2A%21'}, @foo.each_pair_escape(opt) )
+    assert_equal( "%2F%20%2B%3D%26=123%40%2A%21", @foo.parsed_params(opt) )
   end
 
   def test_url_escape
