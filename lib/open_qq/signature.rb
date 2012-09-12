@@ -23,6 +23,10 @@ module OpenQq
       options.inject({}){|h,(k,v)| h[url_escape(k.to_s)] = url_escape(v.to_s);h}
     end
 
+    def parsed_params(params)
+      each_pair_escape(params).map{|k,v| "#{k}=#{v}"}.join('&')
+    end
+
     def make_source(http_method, url, options)
       escape_opt = url_escape( options.sort_by{|k,v| k.to_s}.map{|kv| "#{kv.first}=#{kv.last}" }.join('&') )
       "#{http_method}&#{url_escape(url)}&#{escape_opt}"

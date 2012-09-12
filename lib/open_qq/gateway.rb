@@ -57,8 +57,8 @@ module OpenQq
     #
     # @return (see #call)
     def get(url, params = {}, options = {})
-      parsed_params = Gateway.each_pair_escape( wrap(:get, url, params) ).map{|k,v| "#{k}=#{v}"}.join('&')
-      get_request   = Net::HTTP::Get.new("#{url}?#{parsed_params}")
+      parsed_params = Gateway.parsed_params( wrap(:get, url, params) )
+      get_request = Net::HTTP::Get.new("#{url}?#{parsed_params}")
       self.call( get_request, options.merge(:format => params[:format]) )
     end
 
@@ -67,7 +67,8 @@ module OpenQq
     # @return (see #call)
     def post(url, params = {}, options = {})
       post_request = Net::HTTP::Post.new(url)
-      post_request.set_form_data wrap(:post, url, params)
+      post_request.body = Gateway.parsed_params( wrap(:post, url, params) )
+      post_request.content_type = 'application/x-www-form-urlencoded'
       self.call( post_request, options.merge(:format => params[:format]) )
     end
 
