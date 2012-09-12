@@ -17,17 +17,19 @@ module OpenQq
       appkey   = options.delete(:appkey)
       env      = options.delete(:env)
       @url     = options.delete(:url)
-      @options = options
+      @options = options || {}
       super(appid, appkey, env)
     end
 
     # @see Gateway#get
-    def get(params = {}, options = @options)
+    def get(params = {}, options = nil)
+      options ||= @options
       super(@url, params, options)
     end
     
     # @see Gateway#get
-    def post(params = {}, options = @options)
+    def post(params = {}, options = nil)
+      options ||= @options
       super(@url, params, options)
     end
 

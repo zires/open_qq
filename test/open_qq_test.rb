@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'test_helper'
 
 class OpenQqTest < MiniTest::Unit::TestCase
@@ -13,7 +14,11 @@ class OpenQqTest < MiniTest::Unit::TestCase
 
   def teardown
     # Need setup back for the rest test
-    OpenQq.setup{|c| c.appid = 12345;c.appkey ='228bf094169a40a3bd188ba37ebe8723'}
+    OpenQq.setup{|c| 
+      c.appid = 12345
+      c.appkey ='228bf094169a40a3bd188ba37ebe8723'
+      c.env ='http://119.147.19.43'
+    }
   end
 
   def test_OpenQq_is_a_module
@@ -100,6 +105,27 @@ class OpenQqTest < MiniTest::Unit::TestCase
     OpenQq.setup{|c| c.appkey = key }
     assert OpenQq.verify_callback_sig(:GET, '/cgi-bin/temp.py', options), 'Verify sig failure 2'
     assert OpenQq.verify_callback_sig(:get, '/cgi-bin/temp.py', options), 'Verify sig failure 3'
+  end
+
+  #http://wiki.open.qq.com/wiki/v3/pay/buy_goods
+  def test_buy_goods
+    options = { :appid => 600,
+                :appkey => '12345f9a47df4d1eaeb3bad9a7e54321',
+                :env => 'https://119.147.19.43'
+    }
+    params = { :amt => 4,:appmode => 1,:format => 'json',:goodsmeta => '道具*测试描述信息！！！',
+               :goodsurl => 'http://qzonestyle.gtimg.cn/qzonestyle/act/qzone_app_img/app613_613_75.png',
+               :openid => '0000000000000000000000000E111111',
+               :openkey => '1111806DC5D1C52150CF405E42222222',
+               :payitem => '50005*4*1',
+               :pf => 'qzone',
+               :pfkey => '1B59A5C3D77C7C56D7AFC3E2C823105D',
+               :ts => '1333674935'
+    }
+    sig = 'fVcr1Imq8FjJZgf3h24haUE18rA='
+    OpenQq.call('/v3/pay/buy_goods', options) do |request|
+      assert_equal sig, request.wrap(:get, '/v3/pay/buy_goods', params)[:sig]
+    end
   end
 
 end
