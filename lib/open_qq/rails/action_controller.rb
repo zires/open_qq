@@ -2,7 +2,6 @@
 #
 # --
 # @author zires
-# @email  zshuaibin@gmail.com
 #
 module OpenQq
   module Rails

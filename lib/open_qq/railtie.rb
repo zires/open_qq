@@ -1,4 +1,8 @@
 # encoding: utf-8
+#
+# --
+# @author zires
+#
 module OpenQq
   class Railtie < ::Rails::Railtie
     

@@ -2,7 +2,6 @@
 #
 # --
 # @author zires
-# @email  zshuaibin@gmail.com
 #
 require 'base64'
 require 'openssl'

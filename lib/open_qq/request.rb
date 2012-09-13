@@ -2,7 +2,6 @@
 #
 # --
 # @author zires
-# @email  zshuaibin@gmail.com
 #
 require 'open_qq/gateway'
 

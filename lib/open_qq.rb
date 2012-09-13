@@ -2,7 +2,6 @@
 #
 # --
 # @author zires
-# @email  zshuaibin@gmail.com
 #
 require 'rubygems' if RUBY_VERSION < '1.9'
 require 'json'

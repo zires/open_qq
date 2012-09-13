@@ -2,7 +2,6 @@
 #
 # --
 # @author zires
-# @email  zshuaibin@gmail.com
 #
 require 'open_qq/signature'
 require 'open_qq/error'
