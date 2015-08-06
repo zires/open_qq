@@ -122,8 +122,9 @@ end
 ```
 可以通过联调工具看下签名是否一致
 
+OpenQq.setup(:appid => '123', :appkey => '456', :env => 'http://119.147.19.43')
 opts = {:openid => '1111',:openkey => '2222',:pf => 'pengyou'}
-sig = OpenQq.wrap(:post, '/v3/user/get_info', opts)['sig']
+sig = OpenQq.wrap(:post, '/v3/user/get_info', opts)[:sig]
 
 puts sig # 与联调结果比对
 
